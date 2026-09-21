@@ -24,10 +24,6 @@ const referenceSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.Mixed,
       default: null,
     },
-    content: {
-      type: mongoose.Schema.Types.Mixed,
-      default: null,
-    },
     description: {
       type: String,
       trim: true,
@@ -36,7 +32,22 @@ const referenceSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
 
+// Seamless backwards compatibility: populate whatContent from content if provided
+referenceSchema.pre('validate', function () {
+  if (this.content && !this.whatContent) {
+    this.whatContent = this.content;
+  }
+});
+
+// Legacy virtual field 'content' returns 'whatContent'
+referenceSchema.virtual('content').get(function () {
+  return this.whatContent;
+});
+
 module.exports = mongoose.model('Reference', referenceSchema);
+

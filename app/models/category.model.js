@@ -13,12 +13,6 @@ const categorySchema = new mongoose.Schema(
       trim: true,
       default: '',
     },
-    references: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Reference',
-      },
-    ],
     image: {
       type: String,
       default: '',
@@ -31,7 +25,16 @@ const categorySchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
+
+// Virtual populate for references without persisting duplicate unbounded ID arrays
+categorySchema.virtual('references', {
+  ref: 'Reference',
+  localField: '_id',
+  foreignField: 'categoryId',
+});
 
 module.exports = mongoose.model('Category', categorySchema);
