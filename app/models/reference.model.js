@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { slugify } = require('../../utilities/slugHelper');
 
 const referenceSchema = new mongoose.Schema(
   {
@@ -6,6 +7,12 @@ const referenceSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Reference title is required'],
       trim: true,
+    },
+    slug: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      index: true,
     },
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -29,6 +36,16 @@ const referenceSchema = new mongoose.Schema(
       trim: true,
       default: '',
     },
+    seoTitle: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    seoDescription: {
+      type: String,
+      trim: true,
+      default: '',
+    },
   },
   {
     timestamps: true,
@@ -37,8 +54,14 @@ const referenceSchema = new mongoose.Schema(
   }
 );
 
-// Seamless backwards compatibility: populate whatContent from content if provided
+// Auto-generate slug from title if not provided & populate whatContent from content if provided
 referenceSchema.pre('validate', function () {
+  if (this.slug) {
+    this.slug = slugify(this.slug);
+  } else if (this.title) {
+    this.slug = slugify(this.title);
+  }
+
   if (this.content && !this.whatContent) {
     this.whatContent = this.content;
   }
@@ -50,4 +73,5 @@ referenceSchema.virtual('content').get(function () {
 });
 
 module.exports = mongoose.model('Reference', referenceSchema);
+
 
