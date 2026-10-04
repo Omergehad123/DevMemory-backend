@@ -70,7 +70,7 @@ const getAllReferences = async (req, res) => {
     'title-asc': { title: 1 },
     'updated-desc': { updatedAt: -1 },
   };
-  const sortOption = sortMap[req.query.sortBy] || { updatedAt: -1 };
+  const sortOption = sortMap[req.query.sortBy] || { createdAt: -1 };
 
   const [references, totalReferences] = await Promise.all([
     Reference.find(filter, { __v: false })
