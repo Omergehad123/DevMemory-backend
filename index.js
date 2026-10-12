@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 5000;
 const httpStatusText = require('./utilities/httpStatusText');
 const categoriesRouter = require('./routes/category.routes');
 const referencesRouter = require('./routes/reference.routes');
+const subscribersRouter = require('./routes/subscriber.routes');
 
 // Basic Middlewares
 app.use(cors());
@@ -20,6 +21,7 @@ app.use(express.json());
 // Routes
 app.use('/api/categories', categoriesRouter);
 app.use('/api/references', referencesRouter);
+app.use('/api/subscribers', subscribersRouter);
 
 // Test Route
 app.get('/', (req, res) => {
